@@ -9,22 +9,10 @@
 </head>
 <body>
     <div class="box" id="heading">
-        <h1 style="color: purple">Today is <%= listEJSDay %></h1>
+        <h1 style="color: purple"><%= listEJSListTitle %></h1>
     </div>
 
     <div class="box">
-        <div class="item">
-            <input type="checkbox">
-            <p>Sleep</p>
-        </div>
-        <div class="item">
-            <input type="checkbox">
-            <p>Code</p>
-        </div>
-        <div class="item">
-            <input type="checkbox">
-            <p>Love</p>
-        </div>
         <% for (listItem of listEJSToDoItems) { %>
             <div class="item">
                 <input type="checkbox">
@@ -32,7 +20,7 @@
             </div>
         <% } %>
 
-        <form class="item" action="/" method="post">
+        <form class="item" action=<%= listEJSRoutePath %> method="post">
             <input type="text" name="toDoItem" placeholder="Add new plan">
             <button type="submit">+</button>
         </form>

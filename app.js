@@ -11,7 +11,8 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static("public"));
 
-var toDoItems = [];
+var toDoItems = ["Sleep", "Code", "Love"];
+var toDoWorkItems = [];
 
 function getTodayStr() {
     var today = new Date();
@@ -22,13 +23,23 @@ function getTodayStr() {
 }
 
 app.get("/", (req, res) => {
-    res.render("list", {listEJSDay: getTodayStr(), listEJSToDoItems: toDoItems});
+    res.render("list", {listEJSListTitle: getTodayStr(), listEJSToDoItems: toDoItems, listEJSRoutePath: req.path});
 })
 
 app.post("/", (req, res) => {
     toDoItems.push(req.body.toDoItem);
 
-    res.redirect("/");
+    res.redirect(req.path);
+});
+
+app.get("/work", (req, res) => {
+    res.render("list", {listEJSListTitle: "Work", listEJSToDoItems: toDoWorkItems, listEJSRoutePath: req.path});
+})
+
+app.post("/work", (req, res) => {
+    toDoWorkItems.push(req.body.toDoItem);
+
+    res.redirect(req.path);
 });
 
 app.listen(3000, () => {
