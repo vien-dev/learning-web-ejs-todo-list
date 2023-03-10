@@ -20,18 +20,14 @@ function getTodayStr() {
     return `Week ${currentWeekNumber}: ${today.toLocaleString("default", todayOptions)}`;
 }
 
-function renderResponseForMainRoute(res) {
-    res.render("list", {listEJSDay: getTodayStr(), listEJSToDoItems: toDoItems});
-}
-
 app.get("/", (req, res) => {
-    renderResponseForMainRoute(res);
+    res.render("list", {listEJSDay: getTodayStr(), listEJSToDoItems: toDoItems});
 })
 
 app.post("/", (req, res) => {
     toDoItems.push(req.body.toDoItem);
 
-    renderResponseForMainRoute(res);
+    res.redirect("/");
 });
 
 app.listen(3000, () => {
