@@ -42,6 +42,10 @@ app.post("/work", (req, res) => {
     res.redirect(req.path);
 });
 
+app.get("/about", (req, res) => {
+    res.render("about");
+});
+
 app.listen(3000, () => {
     console.log("ToDo List server starts to serve at port 3000.");
 })
