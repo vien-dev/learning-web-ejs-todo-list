@@ -21,10 +21,7 @@ function getTodayStr() {
 }
 
 function renderResponseForMainRoute(res) {
-    toDoItemsHtmlStr = "";
-    toDoItems.forEach((toDoItem, idx) => toDoItemsHtmlStr += `<li>${toDoItem}</li>`);
-
-    res.render("list", {listEJSDay: getTodayStr(), listEJSToDoItems: toDoItemsHtmlStr});
+    res.render("list", {listEJSDay: getTodayStr(), listEJSToDoItems: toDoItems});
 }
 
 app.get("/", (req, res) => {

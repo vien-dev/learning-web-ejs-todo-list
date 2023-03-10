@@ -13,7 +13,9 @@
         <li>Sleep</li>
         <li>Code</li>
         <li>Love</li>
-        <%- listEJSToDoItems %>
+        <% for (listItem of listEJSToDoItems) { %>
+            <li><%= listItem %></li>
+        <% } %>
     </ul>
     <form action="/" method="post">
         <input type="text" name="toDoItem" alt="What are you planning to do?">
