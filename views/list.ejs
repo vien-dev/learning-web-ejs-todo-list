@@ -7,10 +7,18 @@
     <title>ToDo List</title>
 </head>
 <body>
-    <% if (nameOfDay === "Saturday" || nameOfDay === "Sunday") { %>
-        <h1 style="color: purple">Today is <%= nameOfDay %></h1>
-    <% } else { %>
-        <h1 style="color: blue">Today is <%= nameOfDay %></h1>
-    <% } %>
+    <h1 style="color: purple">Today is <%= listEJSDay %></h1>
+
+    <ul>
+        <li>Sleep</li>
+        <li>Code</li>
+        <li>Love</li>
+        <%- listEJSToDoItems %>
+    </ul>
+    <form action="/" method="post">
+        <input type="text" name="toDoItem" alt="What are you planning to do?">
+        <br>
+        <button type="submit">Add!</button>
+    </form>
 </body>
 </html>
