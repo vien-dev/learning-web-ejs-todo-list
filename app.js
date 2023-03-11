@@ -1,9 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const dayjs = require('dayjs');
-const weekOfYear = require('dayjs/plugin/weekOfYear')
-
-dayjs.extend(weekOfYear);
+const date_utils = require(__dirname + "/date-utils.js");
 
 const app = express();
 
@@ -14,16 +11,8 @@ app.use(express.static("public"));
 var toDoItems = ["Sleep", "Code", "Love"];
 var toDoWorkItems = [];
 
-function getTodayStr() {
-    var today = new Date();
-    var todayOptions = {weekday: "long", day: "numeric", month: "long", year: "numeric"};
-    var currentWeekNumber = dayjs().week();
-
-    return `Week ${currentWeekNumber}: ${today.toLocaleString("default", todayOptions)}`;
-}
-
 app.get("/", (req, res) => {
-    res.render("list", {listEJSListTitle: getTodayStr(), listEJSToDoItems: toDoItems, listEJSRoutePath: req.path});
+    res.render("list", {listEJSListTitle: date_utils.getTodayStr(), listEJSToDoItems: toDoItems, listEJSRoutePath: req.path});
 })
 
 app.post("/", (req, res) => {
