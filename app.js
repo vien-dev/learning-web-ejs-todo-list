@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const date_utils = require(__dirname + "/date-utils.js");
+const dateUtils = require(__dirname + "/date-utils.js");
+const todoListDBAdapter = require(__dirname + "/todo-list-db-adapter.js");
+const _ = require("lodash");
 
 const app = express();
 
@@ -8,27 +10,80 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static("public"));
 
-var toDoItems = ["Sleep", "Code", "Love"];
-var toDoWorkItems = [];
+const defaultTodoListCollectionName = "Default";
 
 app.get("/", (req, res) => {
-    res.render("list", {listEJSListTitle: date_utils.getTodayStr(), listEJSToDoItems: toDoItems, listEJSRoutePath: req.path});
+    todoListDBAdapter.getTodoList(defaultTodoListCollectionName)
+    .then(function(todoList) {
+        //console.log(todoList);
+        if (0 === todoList.length) {
+            todoListDBAdapter.initDefaultTodoList(defaultTodoListCollectionName)
+            .then(function(initiatedTodoList) {
+                //console.log(initiatedTodoList);
+                res.render("list", {
+                    listEJSListTitle: dateUtils.getTodayStr(), 
+                    listEJSToDoItems: initiatedTodoList, 
+                    listEJSRoutePath: req.path
+                });
+            });
+        } else {
+            res.render("list", {
+                listEJSListTitle: dateUtils.getTodayStr(), 
+                listEJSToDoItems: todoList, 
+                listEJSRoutePath: req.path
+            });
+        }
+    })
+    .catch(function(err) {
+        if (err) {
+            res.status(500).send(`Internal server error! ${err}`);
+        }
+    });
 })
 
 app.post("/", (req, res) => {
-    toDoItems.push(req.body.toDoItem);
-
-    res.redirect(req.path);
+    todoListDBAdapter.insertItemToTodoList(defaultTodoListCollectionName, req.body.toDoItem)
+    .then(function() {
+        res.redirect(req.path);
+    });
 });
 
-app.get("/work", (req, res) => {
-    res.render("list", {listEJSListTitle: "Work", listEJSToDoItems: toDoWorkItems, listEJSRoutePath: req.path});
+app.get("/list/:listName", (req, res) => {
+    const listName = _.kebabCase(req.params["listName"]);
+
+    todoListDBAdapter.getTodoList(listName)
+    .then(function(todoList) {
+        //console.log(todoList);
+        if (0 === todoList.length) {
+            todoListDBAdapter.initDefaultTodoList(listName)
+            .then(function(initiatedTodoList) {
+                //console.log(initiatedTodoList);
+                res.render("list", {
+                    listEJSListTitle: dateUtils.getTodayStr(), 
+                    listEJSToDoItems: initiatedTodoList, 
+                    listEJSRoutePath: req.path
+                });
+            });
+        } else {
+            res.render("list", {
+                listEJSListTitle: dateUtils.getTodayStr(), 
+                listEJSToDoItems: todoList, 
+                listEJSRoutePath: req.path
+            });
+        }
+    })
+    .catch(function(err) {
+        if (err) {
+            res.status(500).send(`Internal server error! ${err}`);
+        }
+    });
 })
 
-app.post("/work", (req, res) => {
-    toDoWorkItems.push(req.body.toDoItem);
-
-    res.redirect(req.path);
+app.post("/list/:listName", (req, res) => {
+    const listName = _.kebabCase(req.params["listName"]);
+    todoListDBAdapter.insertItemToTodoList(listName, req.body.toDoItem).then(function() {
+        res.redirect(req.path);
+    });
 });
 
 app.get("/about", (req, res) => {
