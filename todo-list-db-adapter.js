@@ -14,7 +14,7 @@ const todoListSchema = mongoose.Schema({
     }
 });
 
-const uri = "mongodb://127.0.0.1:27017/todolistDB"
+const uri = "mongodb://127.0.0.1:27017/todolistDB";
 
 async function initDefaultTodoList(todoListName) {
     await mongoose.connect(uri);
@@ -76,6 +76,16 @@ async function insertItemToTodoList(todoListName, value) {
     return await TodoItem.find({});
 }
 
+async function removeItemFromTodoList(todoListName, actionId) {
+    await mongoose.connect(uri);
+    console.log("Connected to todolistDB in mongoDB");
+
+    const TodoItem = mongoose.model(todoListName, itemSchema);
+
+    return await TodoItem.findByIdAndDelete(actionId);
+}
+
 exports.initDefaultTodoList = initDefaultTodoList;
 exports.getTodoList = getTodoList;
 exports.insertItemToTodoList = insertItemToTodoList;
+exports.removeItemFromTodoList = removeItemFromTodoList;

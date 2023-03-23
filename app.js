@@ -20,17 +20,14 @@ app.get("/", (req, res) => {
             todoListDBAdapter.initDefaultTodoList(defaultTodoListCollectionName)
             .then(function(initiatedTodoList) {
                 //console.log(initiatedTodoList);
-                res.render("list", {
-                    listEJSListTitle: dateUtils.getTodayStr(), 
-                    listEJSToDoItems: initiatedTodoList, 
-                    listEJSRoutePath: req.path
-                });
+                res.redirect("/");
             });
         } else {
             res.render("list", {
                 listEJSListTitle: dateUtils.getTodayStr(), 
                 listEJSToDoItems: todoList, 
-                listEJSRoutePath: req.path
+                listEJSRoutePath: req.path,
+                listEJSCollectionName: defaultTodoListCollectionName
             });
         }
     })
@@ -48,6 +45,23 @@ app.post("/", (req, res) => {
     });
 });
 
+app.post("/delete", (req, res) => {
+    const actionId = req.body.checkbox;
+    const listName = req.body.listName;
+
+    todoListDBAdapter.removeItemFromTodoList(listName, actionId)
+    .then(function() {
+        if (defaultTodoListCollectionName === listName) {
+            res.redirect("/");
+        } else {
+            res.redirect(`/list/${listName}`);
+        }
+    })
+    .catch(function(err) {
+        res.status(500).send("Internal server error!");
+    });
+});
+
 app.get("/list/:listName", (req, res) => {
     const listName = _.kebabCase(req.params["listName"]);
 
@@ -58,17 +72,14 @@ app.get("/list/:listName", (req, res) => {
             todoListDBAdapter.initDefaultTodoList(listName)
             .then(function(initiatedTodoList) {
                 //console.log(initiatedTodoList);
-                res.render("list", {
-                    listEJSListTitle: dateUtils.getTodayStr(), 
-                    listEJSToDoItems: initiatedTodoList, 
-                    listEJSRoutePath: req.path
-                });
+                res.redirect(req.path);
             });
         } else {
             res.render("list", {
                 listEJSListTitle: dateUtils.getTodayStr(), 
                 listEJSToDoItems: todoList, 
-                listEJSRoutePath: req.path
+                listEJSRoutePath: req.path,
+                listEJSCollectionName: listName
             });
         }
     })
